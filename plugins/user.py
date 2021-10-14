@@ -14,7 +14,9 @@ from libs.ldap_func import ldap_auth, ldap_change_password, \
     ldap_get_membership, ldap_get_group, ldap_in_group, ldap_get_entry_simple, ldap_rename_entry, \
     ldap_update_attribute, ldap_user_exists, ldap_get_entries, LDAP_AD_USERACCOUNTCONTROL_VALUES
 
-from libs.common import get_parsed_pager_attribute, convert_adtimestamp_to_datetime
+from libs.common import (
+    get_parsed_pager_attribute, convert_adtimestamp_to_milliseconds,
+)
 
 import ldap
 
@@ -98,12 +100,9 @@ def init(app):
                 datetime_field = datetime.strptime(datetime_field, '%d/%m/%Y %H:%M:%S')
                 user["whenCreated"] = datetime_field.astimezone(timezone(Settings.TIMEZONE))
 
-                user["lastLogon"] = convert_adtimestamp_to_datetime(int(user["lastLogon"]))\
-                    .astimezone(timezone(Settings.TIMEZONE))
-                user["lastLogonTimestamp"] = convert_adtimestamp_to_datetime(int(user["lastLogonTimestamp"]))\
-                    .astimezone(timezone(Settings.TIMEZONE))
-                user["pwdLastSet"] = convert_adtimestamp_to_datetime(int(user["pwdLastSet"])) \
-                    .astimezone(timezone(Settings.TIMEZONE))
+                user["lastLogon"] = convert_adtimestamp_to_milliseconds(int(user["lastLogon"]))
+                user["lastLogonTimestamp"] = convert_adtimestamp_to_milliseconds(int(user["lastLogonTimestamp"]))
+                user["pwdLastSet"] = convert_adtimestamp_to_milliseconds(int(user["pwdLastSet"])) 
 
             if 'jpegPhoto' in user:
                 user.pop('jpegPhoto')

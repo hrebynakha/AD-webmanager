@@ -50,6 +50,16 @@ def convert_adtimestamp_to_datetime(timestamp: int):
     return dt_object
 
 
+def convert_adtimestamp_to_milliseconds(timestamp: int):
+    """
+        This function takes a 18 digit AD timestamp
+        and returns the corresponding in milliseconds
+    """
+    unix_timestamp = (timestamp / 10000000) - 11644473600
+    ms_object = unix_timestamp*1000
+    return ms_object
+
+
 def iri_for(endpoint, **values):
     """
         Wrapper to url_for for utf-8 URLs.

@@ -20,7 +20,7 @@ from libs.common import iri_for as url_for
 from settings import Settings
 from flask import abort, flash, g, render_template, redirect, request
 from flask_wtf import FlaskForm
-from wtforms import RadioField, TextAreaField, TextField, HiddenField
+from wtforms import RadioField, TextAreaField, StringField, HiddenField
 from wtforms.validators import DataRequired
 
 from libs.ldap_func import ldap_auth, ldap_create_entry, ldap_delete_entry, \
@@ -41,21 +41,21 @@ class GroupAddMembers(FlaskForm):
 
 
 class GroupEdit(FlaskForm):
-    name = TextField('Name', [DataRequired()])
-    description = TextField(u'Description')
-    mail = TextField(u'Mail')
-    group_type = RadioField('Type',
-                            choices=[(2147483648, 'Security Group'),
-                                     (0, u'Distribution list')],
+    name = StringField('Nombre', [DataRequired()])
+    description = StringField(u'Descripción')
+    mail = StringField(u'Correo')
+    group_type = RadioField('Tipo',
+                            choices=[(2147483648, 'Grupo de Seguridad'),
+                                     (0, u'Lista de Distribución')],
                             coerce=int)
-    group_flags = RadioField(u'Ambit', coerce=int)
+    group_flags = RadioField(u'Límites', coerce=int)
 
 
 def init(app):
     @app.route('/groups/+add', methods=['GET', 'POST'])
     @ldap_auth(Settings.ADMIN_GROUP)
     def group_add():
-        title = "Add group"
+        title = "Adicionar Grupo"
 
         form = GroupEdit(request.form)
         field_mapping = [('sAMAccountName', form.name),
@@ -102,7 +102,7 @@ def init(app):
             form.group_flags.data = 2
 
         return render_template("forms/basicform.html", form=form, title=title,
-                               action="Add group",
+                               action="Adicionar Grupo",
                                parent=url_for('tree_base'))
 
     @app.route('/group/<groupname>')

@@ -10,11 +10,11 @@
 <div class="user_profile" style="min-height:10em;">
     <div class="right">
 {% if g.ldap['username'] == user['sAMAccountName'] or admin %}
-        <p style="text-align: right;"><a href="{{ url_for('user_changepw', username=user['sAMAccountName']) }}" class="button">Change Password</a></p>
+        <p style="text-align: right;"><a href="{{ url_for('user_changepw', username=user['sAMAccountName']) }}" class="button">Cambiar contraseña</a></p>
 {% endif %}
 {% if admin %}
-        <p style="text-align: right;"><a href="{{ url_for('user_edit_profile', username=user['sAMAccountName']) }}" class="button">Edit user</a></p>
-        <p style="text-align: right;"><a href="{{ url_for('user_delete', username=user['sAMAccountName']) }}" class="button">Remove user</a></p>
+        <p style="text-align: right;"><a href="{{ url_for('user_edit_profile', username=user['sAMAccountName']) }}" class="button">Editar usuarios</a></p>
+        <p style="text-align: right;"><a href="{{ url_for('user_delete', username=user['sAMAccountName']) }}" class="button">Eliminar usuario</a></p>
 {% endif %}
     </div>
     <h2>Profile</h2>
@@ -64,7 +64,7 @@
      <form method="post" action="?" class="form">
         {{ form.csrf_token }}
         {{ form.available_groups }}
-        <input type="submit" value="Add" />
+        <input type="submit" value="Adicionar" />
     </form>
     </p>
    {% endif %}

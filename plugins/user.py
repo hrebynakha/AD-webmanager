@@ -39,7 +39,7 @@ import ldap
 
 
 class UserSSHEdit(FlaskForm):
-    ssh_keys = TextAreaField('SSH keys')
+    ssh_keys = TextAreaField('Llaves SSH')
 
 
 class UserAddGroup(FlaskForm):
@@ -50,8 +50,13 @@ class UserProfileEdit(FlaskForm):
     first_name = StringField('Nombre', [DataRequired(), Length(max=64)])
     last_name = StringField('Apellido', [Length(max=64)])
     user_name = StringField('Nombre de usuario', [DataRequired(), Length(max=20)])
-    mail = StringField(u' Correo', [Length(max=256)])
-    uac_flags = SelectMultipleField('Flags', coerce=int)
+    mail = StringField(u' Dirección de correo', [Length(max=256)])
+    category = SelectField(choices=[('Auto', 'Automático'),
+                                    ('A', 'Categoria A'),
+                                    ('B', 'Categoria B'),
+                                    ('C', 'Categoria C'),
+                                    ('D', 'Sin Internet')])
+    uac_flags = SelectMultipleField('Estado', coerce=int)
 
 
 class SICCIPEdit(FlaskForm):
@@ -74,12 +79,19 @@ class UserAdd(UserProfileEdit):
     password_confirm = PasswordField(u'Repetir contraseña',
                                      [DataRequired(),
                                       EqualTo('password',
-                                              message=u'contraseña debe coincidir')])
+                                              message=u'Las contraseñas deben coincidir')])
+    
+    category = SelectField(choices=[('D', 'Sin Internet'),
+                                    ('A', 'Categoria A'),
+                                    ('B', 'Categoria B'),
+                                    ('C', 'Categoria C'),
+                                    ('Auto', 'Automático')])
+                                    
 
 class UserAddExtraFields(UserAdd):
     manual = BooleanField(label="Usuario Manual", validators=[DataRequired()], render_kw={'checked': True})
-    person_type = SelectField(label="Tipo de persona", choices=[('Trabajador', "Trabajador"), ('Estudiante', "Estudiante")])
-    dni = StringField(label='Carnet de Identidad', validators=[DataRequired(), Length(min=11,max=11)])
+    person_type = SelectField(label="Tipo de Persona", choices=[('Worker', "Trabajador"), ('Student', "Estudiante")])
+    dni = StringField(label='Carnet Identidad', validators=[DataRequired(), Length(min=11,max=11)])
 
 
 class PasswordChange(FlaskForm):
@@ -110,6 +122,7 @@ def init(app):
                          ('sn', form.last_name),
                          ('sAMAccountName', form.user_name),
                          ('mail', form.mail),
+                         ('pager', form.category),
                          (None, form.password),
                          (None, form.password_confirm),
                          ('userAccountControl', form.uac_flags)]
@@ -173,7 +186,7 @@ def init(app):
     @app.route('/user/<username>', methods=['GET', 'POST'])
     @ldap_auth("Domain Users")
     def user_overview(username):
-        title = "User details - %s" % username
+        title = "Detalles del Usuario - %s" % username
 
         if not ldap_user_exists(username=username):
             abort(404)
@@ -184,17 +197,17 @@ def init(app):
         
         if logged_user == user['sAMAccountName'] or admin:
 
-            identity_fields = [('givenName', "Name"),
-                               ('sn', "Last Name"),
-                               ('displayName', "Full Name"),
-                               ('name', "Registry Name"),
-                               ('sAMAccountName', "Username"),
-                               ('mail', u"Email address")]
+            identity_fields = [('givenName', "Nombre"),
+                               ('sn', "Apellidos"),
+                               ('displayName', "Nombre Completo"),
+                               ('name', "Nombre del Registro"),
+                               ('sAMAccountName', "Nombre de Usuario"),
+                               ('mail', u"Dirección de Correo")]
 
             if 'title' in user:
-                identity_fields.append(('title', "Occupation"))
+                identity_fields.append(('title', "Ocupación"))
             if 'telephoneNumber' in user:
-                identity_fields.append(('telephoneNumber', "Telephone"))
+                identity_fields.append(('telephoneNumber', "Teléfono"))
 
             if Settings.USER_ATTRIBUTES:
                 for item in Settings.USER_ATTRIBUTES:
@@ -309,7 +322,7 @@ def init(app):
                 flash(u"Error en la validación de datos.", "error")
 
         return render_template("forms/basicform.html", form=form, title=title,
-                               action=u"Change Password",
+                               action=u"Cambiar contraseña",
                                parent=url_for('user_overview',
                                               username=username))
 
@@ -355,6 +368,7 @@ def init(app):
                          ('sn', form.last_name),
                          ('sAMAccountName', form.user_name),
                          ('mail', form.mail),
+                         ('pager', form.category),
                          ('userAccountControl', form.uac_flags)]
 
         form.uac_flags.choices = [(key, value[0]) for key, value in LDAP_AD_USERACCOUNTCONTROL_VALUES.items()]

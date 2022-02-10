@@ -1,2 +1,3 @@
 manager.cfg
 *.pyc
+venv/

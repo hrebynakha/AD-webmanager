@@ -1,0 +1,25 @@
+{% extends "base-modal_es.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<form method="post" action="?" class="form">
+    <p>
+        If you continue the the following will be permanently deleted (children included).<br />
+    </p>
+    <ul>
+        {% for object in to_delete %}
+        {% if object['type'] != 'Organizational Unit' %}
+        <li>{{object['name']}} ({{object['type']}})</li>
+        {% else %}
+        <li>{{object['name']}} ({{object['type']}}) has [{{object['childrenAmmount']}}] children</li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+    <p>
+        Are you sure?
+    </p>
+    {% if parent %}
+    <a class="link-button" href="{{ parent }}">Cancel</a>
+    {% endif %}
+    <input class="right" type="submit" value="{{ action }}" />
+</form>
+{% endblock %}

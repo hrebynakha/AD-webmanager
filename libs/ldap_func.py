@@ -249,7 +249,7 @@ def ldap_get_entries(ldap_filter, base=None, scope=None, attrlist=None, ignore_e
     return entries
 
 def ldap_get_obj_children (base):
-    scope = 'onelevel'
+    scope = 'subtree'
     filter=None
     attrlist=['distinguishedName']
     result = ldap_get_entries(filter,base,scope,attrlist)

@@ -248,14 +248,12 @@ def ldap_get_entries(ldap_filter, base=None, scope=None, attrlist=None, ignore_e
         entries.append(attributes)
     return entries
 
-def ldap_obj_has_children (base):
+def ldap_get_obj_children (base):
     scope = 'onelevel'
     filter=None
     attrlist=['distinguishedName']
     result = ldap_get_entries(filter,base,scope,attrlist)
-    if len(result):
-        return True
-    return False
+    return result
 
 def ldap_get_all_users ():
     base = g.ldap['search_dn']

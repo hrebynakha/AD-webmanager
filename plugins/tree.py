@@ -92,9 +92,7 @@ def init(app):
             elif paste.paste.data:
                 checkedData = request.form.getlist("checkedItems")
                 moveTo = request.form.get("moveHere")
-                print(parse.unquote(moveTo))
                 moveTo = parse.unquote(moveTo.split("tree/")[1])
-                print(moveTo)
                 toMove = translation(checkedData)
                 try:
                     moved_list = move_batch(toMove,moveTo)
@@ -107,7 +105,6 @@ def init(app):
             elif moveToRoot.toRoot.data:
                 checkedData = request.form.getlist("checkedItems")
                 moveTo = g.ldap['search_dn']
-                print(checkedData)
                 toMove = translation(checkedData)
                 try:
                     moved_list = move_batch(toMove,moveTo)
@@ -277,7 +274,6 @@ def init(app):
         Returns:
             a list with the names of the moved elements
         """
-        print(moveTo)
         moved_list = []
         for obj in translatedList:
             moved_list.append(obj['name'])

@@ -2,14 +2,14 @@ from fnmatch import translate
 from time import process_time_ns
 from urllib import parse
 import ldap
-from flask import Flask, abort, flash, g, redirect, render_template, request
+from flask import Flask, abort, flash, g, redirect, render_template, request, session
 from flask_wtf import FlaskForm
 from libs.common import get_objclass
 from libs.common import iri_for as url_for
 from libs.common import namefrom_dn
 from libs.ldap_func import (ldap_auth, ldap_delete_entry, ldap_get_entries,
-                            ldap_get_group, ldap_get_ou, ldap_get_user,
-                            ldap_in_group, ldap_obj_has_children, ldap_update_attribute, move)
+                            ldap_get_group, ldap_get_user,
+                            ldap_in_group, ldap_get_obj_children, ldap_update_attribute)
 from settings import Settings
 from wtforms import SelectField, StringField, SubmitField
 
@@ -39,6 +39,8 @@ def init(app):
     @app.route('/tree/<base>', methods=['GET', 'POST'])
     @ldap_auth("Domain Users")
     def tree_base(base=None):
+        if 'batch-delete' in session.keys():
+            session.pop('batch-delete')
         if not base:
             base = g.ldap['dn']
         elif not base.lower().endswith(g.ldap['dn'].lower()):
@@ -82,12 +84,9 @@ def init(app):
             if batch_delete.delete.data:
                 checkedData = request.form.getlist("checkedItems") #returns an array of Strings, tho the strings have dict format
                 toDelete = translation(checkedData)
-                try:
-                    deleted_list = delete_batch(toDelete)
-                    flash_amount(deleted_list, deleted=True)
-                except ldap.LDAPError as e:
-                    flash(e,"error")
-                return redirect(url_for('tree_base', base=base))
+                session['batch-delete'] = toDelete
+                return redirect(url_for('batch_delete',base=base))
+               
             ##batch move (1 in)
             elif paste.paste.data:
                 checkedData = request.form.getlist("checkedItems")
@@ -133,6 +132,23 @@ def init(app):
                                 paste=paste,moveOneLevelUp=moveOneLevelUp,moveToRoot=moveToRoot,
                                 admin=admin, base=base.upper(), entries=entries,entry_fields=entry_fields, 
                                root=g.ldap['search_dn'].upper(), name=name, objclass=objclass)
+
+    @app.route('/batch-delete/confirmation/<base>', methods=['GET', 'POST'])
+    def batch_delete(base):
+        title = 'Batch Delete'
+        action = 'Delete'
+        toDelete = []
+        if 'batch-delete' in session.keys():
+            toDelete = session['batch-delete']
+        if request.method == 'POST':
+            try:
+                deleted_list = delete_batch(toDelete)
+                flash_amount(deleted_list, deleted=True)
+            except ldap.LDAPError as e:
+                flash(e,"error")
+            return redirect(url_for('tree_base', base=base))
+        return render_template('pages/batch_delete.html', title=title, action=action,
+                                 parent=base, to_delete=toDelete)
 
     def get_entries(filter_str, filter_select, base, scope):
         """
@@ -228,10 +244,14 @@ def init(app):
                 key5 = group['distinguishedName']
             elif key2 == "Organization Unit":
                 key5 = parse.unquote(key4)
+                key6 = ldap_get_obj_children(key5)
             dicts['name'] = key1
             dicts['type'] = key2
             if key2 != 'Organization Unit':
                 dicts['username'] = key4
+            else:
+                dicts['children'] = key6
+                dicts['childrenAmmount'] = len(key6)
             dicts['dn'] = key5
             translated.append(dicts)
         return translated
@@ -254,12 +274,12 @@ def init(app):
                     ldap_delete_entry(obj['dn'])
                     deleted_list.append(obj['name'])
                 else:
-                    canDelete = not ldap_obj_has_children(obj['dn'])
-                    if canDelete:
-                        ldap_delete_entry(obj['dn'])
-                        deleted_list.append(obj['name'])
-                    else:
-                        flash(f"Can't delete OU: '{obj['name']}' because is not empty", "error")
+                    if obj['childrenAmmount'] != 0:
+                        delete_obj_children(obj['children'])
+                    ldap_delete_entry(obj['dn'])
+                    deleted_list.append(obj['name'])
+                    # else:
+                    #     flash(f"Can't delete OU: '{obj['name']}' because is not empty", "error")
             else:
                 flash(f"Can't delete {obj['name']} Container", "error")
         return deleted_list
@@ -296,3 +316,7 @@ def init(app):
                 flash("1 element "+ action+ " successfully.", "success")
             else:
                 flash(f"{len(namesList)} elements " +action+ " successfully", "success")
+
+    def delete_obj_children(obj_childrens):
+        for children in obj_childrens:
+            print(children)

@@ -7,7 +7,7 @@
     </p>
     <ul>
         {% for object in to_delete %}
-        {% if object['type'] != 'Organizational Unit' %}
+        {% if object['type'] != 'Organization Unit' %}
         <li>{{object['name']}} ({{object['type']}})</li>
         {% else %}
         <li>{{object['name']}} ({{object['type']}}) has [{{object['childrenAmmount']}}] children</li>

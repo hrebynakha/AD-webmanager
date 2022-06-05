@@ -251,7 +251,7 @@ def init(app):
                 dicts['username'] = key4
             else:
                 dicts['children'] = key6
-                dicts['childrenAmmount'] = len(key6)
+                dicts['childrenAmmount'] = len(key6) - 1
             dicts['dn'] = key5
             translated.append(dicts)
         return translated

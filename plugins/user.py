@@ -197,8 +197,9 @@ def init(app):
                 identity_fields.append(('telephoneNumber', "Telephone"))
 
             if 'jpegPhoto' in user:
-                imgbase64 = base64.b64encode(user['jpegPhoto']).decode()
-                user['jpegPhoto'] = 'data:image/jpeg;base64,' + imgbase64
+                imgbase64 = base64.b64encode(user['jpegPhoto']).decode('utf-8')
+                print(imgbase64)
+                user['jpegPhoto'] = imgbase64
                 identity_fields.append(('Profile Photo', 'jpegPhoto'))
 
             group_fields = [('sAMAccountName', "Name"),

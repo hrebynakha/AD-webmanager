@@ -134,6 +134,7 @@ def init(app):
                                root=g.ldap['search_dn'].upper(), name=name, objclass=objclass)
 
     @app.route('/batch-delete/confirmation/<base>', methods=['GET', 'POST'])
+    @ldap_auth("Domain Users")
     def batch_delete(base):
         title = 'Batch Delete'
         action = 'Delete'

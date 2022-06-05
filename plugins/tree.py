@@ -147,7 +147,7 @@ def init(app):
             except ldap.LDAPError as e:
                 flash(e,"error")
             return redirect(url_for('tree_base', base=base))
-        return render_template('pages/batch_delete.html', title=title, action=action,
+        return render_template('pages/batch_delete_es.html', title=title, action=action,
                                  parent=base, to_delete=toDelete)
 
     def get_entries(filter_str, filter_select, base, scope):

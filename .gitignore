@@ -12,3 +12,6 @@ ADwebmanager.sock
 config-nginx.conf
 config-uwsgi.ini
 wsgi.py
+.terraform/
+.terraform.*
+terraform.tfs*

@@ -1,6 +1,5 @@
 import base64
 from io import BytesIO
-from tkinter.messagebox import NO
 
 import ldap
 from flask import abort, flash, g, redirect, render_template, request

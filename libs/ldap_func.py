@@ -16,6 +16,7 @@
 # You can find the license on Debian systems in the file
 # /usr/share/common-licenses/GPL-2
 
+from asyncio import protocols
 from collections import UserList
 from flask import request, Response, g, session, abort
 from functools import wraps
@@ -526,9 +527,11 @@ def _ldap_connect(username, password):
 
     for server in servers:
         port = 389
-        if Settings['USE_TLS']:
+        protocol = 'ldap'
+        if Settings.USE_TLS:
             port = 636
-        connection = ldap.initialize("ldaps://%s:%s" % server, port)
+            protocol = 'ldaps'
+        connection = ldap.initialize("%s://%s:%s" % protocol, server, port)
         try:
             connection.simple_bind_s("%s@%s" % (username, g.ldap['domain']),
                                     password)

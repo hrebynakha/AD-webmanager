@@ -578,7 +578,7 @@ def _ldap_decode_attribute(key, value):
     if isinstance(value, list):
         if len(value) > 1:
             #raise Exception("Unknown multiple value field: %s" % key)
-            print("Unknown multiple value field: %s" % key)
+            print("Unknown multiple value field isinstance: %s" % key)
             return value
         else:
             value = value[0]
@@ -607,7 +607,7 @@ def _ldap_decode_attribute(key, value):
         return value.decode('utf-8')
     except:
         #raise Exception("Unknown type: %s" % key)
-        print("Unknown multiple value field: %s" % key)
+        print("Unknown multiple value field decode: %s" % key)
         return value
 
 

@@ -38,6 +38,7 @@ regarding compatibility with other platforms is welcomed.
  * ADD to TREE\_BLACKLIST the containers you want to hide in the root directory
  * Set ADMIN\_GROUP to the security group with read/write permission (default should be Domain Admins)
  * Add attribute pairs to SEARCH\_ATTRS and TREE\_ATTRIBUTES to customize the tree view
+ * Use the USE_LDAPS = True if you want the work on LDAPS protocol(636) (the default set to LDAP, 389 Port)
 
 ### Settings.py example:
 

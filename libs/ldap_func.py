@@ -57,7 +57,10 @@ LDAP_AD_MULTIVALUE_ATTRIBUTES = ['member', 'memberOf', 'objectClass', 'repsTo','
 LDAP_AD_SID_ATTRIBUTES = ['objectSid']
 LDAP_AD_UINT_ATTRIBUTES = ['userAccountControl', 'groupType']
 LDAP_AD_Object_ATTRIBUTES = ['jpegPhoto', 'ipsecData', 'dnsRecord']
-
+if Settings.USE_LDAPS is None:
+    USE_LDAPS = False
+else:
+    USE_LDAPS = Settings.USE_LDAPS
 
 def ldap_change_password(old_password, new_password, username=None):
     """
@@ -528,7 +531,7 @@ def _ldap_connect(username, password):
     for server in servers:
         connection = ldap.initialize("ldap://%s:389" % server)
         print("Connect by ldap 389")
-        if Settings.USE_TLS:
+        if USE_LDAPS:
           connection = ldap.initialize("ldaps://%s:389" % server)
         
         try:

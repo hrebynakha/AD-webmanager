@@ -57,10 +57,10 @@ LDAP_AD_MULTIVALUE_ATTRIBUTES = ['member', 'memberOf', 'objectClass', 'repsTo','
 LDAP_AD_SID_ATTRIBUTES = ['objectSid']
 LDAP_AD_UINT_ATTRIBUTES = ['userAccountControl', 'groupType']
 LDAP_AD_Object_ATTRIBUTES = ['jpegPhoto', 'ipsecData', 'dnsRecord']
-if Settings.USE_LDAPS is None:
+try:
+    USE_LDAPS = Settings.USE_LDAPS 
+except:
     USE_LDAPS = False
-else:
-    USE_LDAPS = Settings.USE_LDAPS
 
 def ldap_change_password(old_password, new_password, username=None):
     """

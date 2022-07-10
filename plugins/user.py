@@ -1,5 +1,6 @@
 import base64
 from io import BytesIO
+from tkinter.messagebox import NO
 
 import ldap
 from flask import abort, flash, g, redirect, render_template, request
@@ -416,7 +417,12 @@ def init(app):
                         elif attribute == 'sn':
                             last_name = value
                             ldap_update_attribute(user['distinguishedName'], attribute, value)
-                            displayName = given_name + ' ' + last_name
+                            if given_name is None:
+                                displayName = last_name
+                            elif last_name is None:
+                                displayName = given_name
+                            else:
+                                displayName = given_name + ' ' + last_name
                             ldap_update_attribute(user['distinguishedName'], 'displayName', displayName)
                         elif attribute == 'otherMailbox' or attribute == 'otherHomePhone' or \
                                 attribute == 'otherMobile' or attribute == 'otherTelephone':

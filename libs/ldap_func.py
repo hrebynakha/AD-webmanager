@@ -51,7 +51,7 @@ LDAP_AD_BOOL_ATTRIBUTES = ['showInAdvancedViewOnly']
 LDAP_AD_GUID_ATTRIBUTES = ['objectGUID']
 LDAP_AD_MULTIVALUE_ATTRIBUTES = ['member', 'memberOf', 'objectClass', 'repsTo','macAddress',
                                  'servicePrincipalName', 'sshPublicKey', 'managedObjects',
-                                 'proxyAddresses', 'otherMailbox', 'dsCorePropagationData', 
+                                 'proxyAddresses', 'otherMailbox',
                                  'msSFU30SearchAttributes', 'msSFU30ResultAttributes', 'msSFU30KeyAttributes',
                                  'ipsecNFAReference', 'dNSProperty', 'otherHomePhone','otherMobile','otherTelephone']
 LDAP_AD_SID_ATTRIBUTES = ['objectSid']

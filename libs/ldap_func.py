@@ -526,12 +526,10 @@ def _ldap_connect(username, password):
         servers = [g.ldap['server']]
 
     for server in servers:
-        port = 389
-        protocol = 'ldap'
+        connection = ldap.initialize("ldap://%s:389" % server)
         if Settings.USE_TLS:
-            port = 636
-            protocol = 'ldaps'
-        connection = ldap.initialize("%s://%s:%s" % protocol, server, port)
+          connection = ldap.initialize("ldaps://%s:389" % server)
+        
         try:
             connection.simple_bind_s("%s@%s" % (username, g.ldap['domain']),
                                     password)

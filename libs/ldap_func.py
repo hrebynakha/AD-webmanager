@@ -527,6 +527,7 @@ def _ldap_connect(username, password):
 
     for server in servers:
         connection = ldap.initialize("ldap://%s:389" % server)
+        print("Connect by ldap 389")
         if Settings.USE_TLS:
           connection = ldap.initialize("ldaps://%s:389" % server)
         
@@ -546,8 +547,9 @@ def _ldap_connect(username, password):
             return True
         except ldap.INVALID_CREDENTIALS:
             return False
-        #except:
-        #   continue
+        except Exception as e:
+            print("Cannot bind user:", e)
+           
         
 
     #raise Exception("No server reachable at this point.")

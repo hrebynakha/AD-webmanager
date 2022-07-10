@@ -190,3 +190,14 @@ def get_valid_macs(macs : list):
         else:
             flash(f"Invalid MAC address: {mac}", "error")
     return fixed
+
+
+def create_user_displayname(given_name=None, last_name=None):
+    if given_name is None:
+        displayName = last_name
+    elif last_name is None:
+        displayName = given_name
+    else:
+        displayName = given_name + ' ' + last_name
+
+    return displayName

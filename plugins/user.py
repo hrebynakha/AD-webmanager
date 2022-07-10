@@ -7,7 +7,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField
 from requests import RequestException
 from libs.common import (flash_password_errors, get_attr, get_encoded_list,
-                         get_parsed_pager_attribute, get_valid_macs)
+                         get_parsed_pager_attribute, get_valid_macs, create_user_displayname)
 from libs.common import iri_for as url_for
 from libs.common import namefrom_dn, password_is_valid
 from libs.ldap_func import (LDAP_AD_USERACCOUNTCONTROL_VALUES, ldap_auth,
@@ -410,18 +410,13 @@ def init(app):
                             ldap_update_attribute(user['distinguishedName'], attribute, str(current_uac)) 
                         elif attribute == 'givenName':
                             given_name = value
+                            displayName = create_user_displayname(given_name, last_name)
                             ldap_update_attribute(user['distinguishedName'], attribute, value)
-                            displayName = given_name + ' ' + last_name
                             ldap_update_attribute(user['distinguishedName'], 'displayName', displayName)
                         elif attribute == 'sn':
                             last_name = value
+                            displayName = create_user_displayname(given_name, last_name)
                             ldap_update_attribute(user['distinguishedName'], attribute, value)
-                            if given_name is None:
-                                displayName = last_name
-                            elif last_name is None:
-                                displayName = given_name
-                            else:
-                                displayName = given_name + ' ' + last_name
                             ldap_update_attribute(user['distinguishedName'], 'displayName', displayName)
                         elif attribute == 'otherMailbox' or attribute == 'otherHomePhone' or \
                                 attribute == 'otherMobile' or attribute == 'otherTelephone':

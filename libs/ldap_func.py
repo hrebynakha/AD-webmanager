@@ -543,7 +543,7 @@ def _ldap_connect(username, password):
             # Can't go through ldap_get_entry as it requires domain_sid be set.
             result = connection.search_s(g.ldap['dn'], ldap.SCOPE_BASE)
             g.ldap['domain_sid'] = _ldap_decode_attribute("objectSid", result[0][1]['objectSid'])
-
+            print("OK.Succes auth")
             return True
         except ldap.INVALID_CREDENTIALS:
             print("INVALID_CREDENTIALS")

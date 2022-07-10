@@ -546,6 +546,7 @@ def _ldap_connect(username, password):
 
             return True
         except ldap.INVALID_CREDENTIALS:
+            print("INVALID_CREDENTIALS")
             return False
         except Exception as e:
             print("Cannot bind user:", e)

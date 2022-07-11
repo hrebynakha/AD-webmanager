@@ -5,4 +5,4 @@ RUN apt-get update && \
     apt-get install --no-install-suggests --no-install-recommends --yes build-essential python3-dev libldap2-dev libsasl2-dev slapd ldap-utils tox lcov valgrind
 RUN pip install -r requirements.txt
 ENTRYPOINT ["python"]
-CMD ["ADWebmanager.py"]
+CMD ["application.py"]
